@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Julia Santhea's MP3 Player</title>
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1470246973918-29a93221c455?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h1 {
+            color: #f0e68c;
+            margin-top: 100px;
+            font-family: 'Georgia', serif;
+        }
+
+        .player-container {
+            background-color: rgba(240, 230, 140, 0);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            transition: background-color 0.5s ease;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .control-button {
+            background-color: #d4af37;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .control-button:hover {
+            background-color: #b36b00;
+        }
+
+        .song-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-gap: 20px;
+            margin-top: 30px;
+        }
+
+        .song {
+            padding: 20px;
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+            background-color: #f0e68c;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .song:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #d4af37;
+            z-index: -1;
+            transition: transform 0.3s ease;
+            transform: translateY(-100%);
+        }
+
+        .song:hover:before {
+            transform: translateY(0);
+        }
+
+        .song:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .song h2,
+        .song p {
+            color: #8b4513;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+        }
+
+        .audio-controls {
+            display: none;
+        }
+
+        audio {
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+        }
+
+        .artist {
+            color: #8b4513;
+            margin-top: 10px;
+            font-family: 'Times New Roman', Times, serif;
+            text-align: center;
+        }
+
+        #back-button {
+            display: none;
+        }
+
+        .song.selected {
+            transform: scale(1.1);
+            border: 4px solid #d4af37;
+            z-index: 1;
+        }
+
+        .song.selected:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .about-list {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .about-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        .about-container ol {
+            list-style-type: decimal;
+            padding-left: 20px;
+        }
+
+        .about-container ul {
+            list-style-type: disc; 
+            padding-left: 20px;
+        }
+
+        .about-container ul li {
+            margin-bottom: 10px;
+            color: #8b4513;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Julia Santhea's MP3 Player</h1>
+    <div class="controls">
+        <button id="show-songs-button" class="control-button" onclick="showSongs()">Show Songs</button>
+        <button id="about-button" class="control-button" onclick="showAbout()">About</button>
+        <button id="back-button" class="control-button" onclick="goBack()">Back</button>
+    </div>
+    <div class="player-container">
+        <div class="song-list" style="display: none;">
+            <div class="song" onclick="showAudioControls(0)">
+                <button class="control-button">Cruel Summer</button>
+                <p class="artist">Artist: Taylor Swift</p>
+                <img src="Taylor Swift.png" alt="Taylor Swift">
+                <div class="audio-controls">
+                    <audio controls>
+                        <source src="Cruel Summer.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+            <div class="song" onclick="showAudioControls(1)">
+                <button class="control-button">It's Not Living</button>
+                <p class="artist">Artist: The 1975</p>
+                <img src="1975.jfif" alt="The 1975">
+                <div class="audio-controls">
+                    <audio controls>
+                        <source src="It's Not Living (If It's Not With You).mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+            <div class="song" onclick="showAudioControls(2)">
+                <button class="control-button">Paradise</button>
+                <p class="artist">Artist: Coldplay</p>
+                <img src="Coldplay.jfif" alt="Coldplay">
+                <div class="audio-controls">
+                    <audio controls>
+                        <source src="Paradise.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+            <div class="song" onclick="showAudioControls(3)">
+                <button class="control-button">Espresso</button>
+                <p class="artist">Artist: Sabrina Carpenter</p>
+                <img src="Sabrina.jfif" alt="Sabrina Carpenter">
+                <div class="audio-controls">
+                    <audio controls>
+                        <source src="Espresso.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+            <div class="song" onclick="showAudioControls(4)">
+                <button class="control-button">I Quit Drinking</button>
+                <p class="artist">Artist: Kelsea Ballerini and LANY</p>
+                <img src="Lany.jpg" alt="Kelsea Ballerini and LANY">
+                <div class="audio-controls">
+                    <audio controls>
+                        <source src="I Quit Drinking.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-list">
+            <div class="about-container">
+                <ol>
+                    <li>
+                        <strong>Cruel Summer</strong>
+                        <ul>
+                            <li><em>Artist:</em> Taylor Swift</li>
+                            <li><em>Description:</em> A synth-pop song from her album <em>Lover</em> (2019), depicting a passionate summer romance.</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>It's Not Living (If It's Not With You)</strong>
+                        <ul>
+                            <li><em>Artist:</em> The 1975</li>
+                            <li><em>Description:</em> A pop-rock song about personal struggles, featured in their album <em>A Brief Inquiry into Online Relationships</em> (2018).</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Paradise</strong>
+                        <ul>
+                            <li><em>Artist:</em> Coldplay</li>
+                            <li><em>Description:</em> A vibrant, anthemic track about escapism and finding hope, from the album <em>Mylo Xyloto</em> (2011).</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Espresso</strong>
+                        <ul>
+                            <li><em>Artist:</em> Sabrina Carpenter</li>
+                            <li><em>Description:</em> A playful pop song from the singer’s album <em>Emails I Can’t Send</em> (2022), exuding energy and confidence.</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>I Quit Drinking</strong>
+                        <ul>
+                            <li><em>Artists:</em> Kelsea Ballerini and LANY</li>
+                            <li><em>Description:</em> A heart-wrenching duet about the lingering pain of a breakup, released in 2021.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSongs() {
+            document.querySelector('.song-list').style.display = 'grid';
+            document.querySelector('.about-list').style.display = 'none'; // Hide About section when showing songs
+            document.getElementById('back-button').style.display = 'block';
+            document.getElementById('show-songs-button').style.display = 'none';
+            document.getElementById('about-button').style.display = 'none';
+        }
+
+        function showAbout() {
+            document.querySelector('.about-list').style.display = 'block';
+            document.querySelector('.song-list').style.display = 'none'; // Hide songs when showing about
+            document.getElementById('back-button').style.display = 'block';
+            document.getElementById('show-songs-button').style.display = 'none';
+            document.getElementById('about-button').style.display = 'none';
+        }
+
+        function goBack() {
+            document.querySelector('.song-list').style.display = 'none';
+            document.querySelector('.about-list').style.display = 'none';
+            document.getElementById('back-button').style.display = 'none';
+            document.getElementById('show-songs-button').style.display = 'block';
+            document.getElementById('about-button').style.display = 'block';
+        }
+
+        function showAudioControls(index) {
+            var songs = document.querySelectorAll('.song');
+            var audioControls = document.querySelectorAll('.audio-controls');
+            var audios = document.querySelectorAll('audio'); 
+
+            audios.forEach(audio => {
+                audio.pause(); 
+                audio.currentTime = 0;
+            });
+
+            songs.forEach((song, idx) => {
+                song.classList.toggle('selected', idx === index);
+            });
+
+            audioControls.forEach((control, idx) => {
+                control.style.display = idx === index ? 'block' : 'none';
+            });
+
+            audios[index].play();
+        }
+    </script>
+</body>
+
+</html>
